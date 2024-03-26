@@ -6,7 +6,7 @@ import streamlit as st
 import iris_toy_2
 
 st.set_page_config(page_title='Trust UI Prototype')
-st.write('# KNN Model on Iris Dataset')
+st.write('# Decision Tree Model on Iris Dataset')
 
 ################################################################################
 # Main content
