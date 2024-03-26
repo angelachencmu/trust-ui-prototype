@@ -1,63 +1,49 @@
-from types import SimpleNamespace
+# Import necessary libraries
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
 
-import pandas as pd
-import streamlit as st
+available_features = [
+    'sepal length (cm)',
+    'sepal width (cm)',
+    'petal length (cm)',
+    'petal width (cm)',
+]
 
-import iris_toy_2
+def train_decision_tree_iris(features: list[str]) -> float:
+    """Train and evaluate a decision tree model on the Iris dataset.
 
-st.set_page_config(page_title='Trust UI Prototype')
-st.write('# Decision Tree Model on Iris Dataset')
+    Train a decision tree model on the Iris dataset with user-selected features.
 
-################################################################################
-# Main content
-################################################################################
-main_content = SimpleNamespace()
-main_content.features = st.multiselect(
-    'Select feature(s)',
-    iris_toy_2.available_features,
-    [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
-    key='main_content_features',
-)
+    Parameters
+    ----------
+    features : list[str]
+        List of feature names to use (e.g., ['sepal length (cm)', 'sepal width (cm)']).
 
-if len(main_content.features) > 0:
-    main_content.n_neighbors = list(range(1, 10 + 1))
-    main_content.accuracies = [
-        iris_toy_2.train_knn_iris(main_content.features, n)
-        for n in main_content.n_neighbors
-    ]
-    st.line_chart(
-        pd.DataFrame({
-            'n_neighbors': main_content.n_neighbors,
-            'accuracies': main_content.accuracies,
-        }),
-        x='n_neighbors', y='accuracies'
-    )
-else:
-    st.warning('Please select at least one feature')
+    Returns
+    -------
+    accuracy : float
+        The accuracy of the model on the test set.
+    """
+    # Load Iris dataset
+    iris = datasets.load_iris()
+    X = iris.data[:, [iris.feature_names.index(feature) for feature in features]]
+    y = iris.target
 
+    # Split the dataset into training set and test set
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-################################################################################
-# Calculator sidebar
-################################################################################
-calculator = SimpleNamespace()
-with st.sidebar:
-    st.write('## Calculator')
+    # Create decision tree model
+    dt = DecisionTreeClassifier()
 
-    calculator.features = st.multiselect(
-        'Select feature(s)',
-        iris_toy_2.available_features,
-        [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
-        key='calculator_features',
-    )
-    calculator.n_neighbors = st.slider('Number of neighbors', 1, 10, 5)
+    # Train the model using the training sets
+    dt.fit(X_train, y_train)
 
-    st.write('---')
+    # Predict the response for test dataset
+    y_pred = dt.predict(X_test)
 
-    is_train = st.button('Train model')
-    is_auto_train = st.checkbox('Auto train', value=True)
-
-    if is_train or is_auto_train:
-        if len(calculator.features) == 0:
-            st.warning('Please select at least one feature')
-        accuracy = iris_toy_2.train_knn_iris(calculator.features, calculator.n_neighbors)
-        st.write(f'Accuracy: {accuracy:.6f}')
+    # Model Accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy with features {features}: {accuracy}")
+    return accuracy
