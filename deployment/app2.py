@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import pandas as pd
 import streamlit as st
 
-import iris_toy
+import iris_toy_2
 
 st.set_page_config(page_title='Trust UI Prototype')
 st.write('# KNN Model on Iris Dataset')
@@ -14,15 +14,15 @@ st.write('# KNN Model on Iris Dataset')
 main_content = SimpleNamespace()
 main_content.features = st.multiselect(
     'Select feature(s)',
-    iris_toy.available_features,
-    [iris_toy.available_features[0], iris_toy.available_features[2]],
+    iris_toy_2.available_features,
+    [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
     key='main_content_features',
 )
 
 if len(main_content.features) > 0:
     main_content.n_neighbors = list(range(1, 10 + 1))
     main_content.accuracies = [
-        iris_toy.train_knn_iris(main_content.features, n)
+        iris_toy_2.train_knn_iris(main_content.features, n)
         for n in main_content.n_neighbors
     ]
     st.line_chart(
@@ -45,8 +45,8 @@ with st.sidebar:
 
     calculator.features = st.multiselect(
         'Select feature(s)',
-        iris_toy.available_features,
-        [iris_toy.available_features[0], iris_toy.available_features[2]],
+        iris_toy_2.available_features,
+        [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
         key='calculator_features',
     )
     calculator.n_neighbors = st.slider('Number of neighbors', 1, 10, 5)
@@ -59,5 +59,5 @@ with st.sidebar:
     if is_train or is_auto_train:
         if len(calculator.features) == 0:
             st.warning('Please select at least one feature')
-        accuracy = iris_toy.train_knn_iris(calculator.features, calculator.n_neighbors)
+        accuracy = iris_toy_2.train_knn_iris(calculator.features, calculator.n_neighbors)
         st.write(f'Accuracy: {accuracy:.6f}')
