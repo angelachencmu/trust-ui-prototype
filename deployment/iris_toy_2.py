@@ -1,57 +1,65 @@
-# Import necessary libraries
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+from types import SimpleNamespace
 
-available_features = [
-    'sepal length (cm)',
-    'sepal width (cm)',
-    'petal length (cm)',
-    'petal width (cm)',
-]
+import pandas as pd
+import streamlit as st
+import iris_toy_2
 
-def train_knn_iris(features: list[str], n_neighbors=3) -> float:
-    """Train and evaluate a KNN model on the Iris dataset.
+st.set_page_config(page_title='Trust UI Prototype')
 
-    Train a KNN model on the Iris dataset with user-selected features and number of neighbors.
-    
-    Parameters
-    ----------
-    features : list[str]
-        List of feature names to use (e.g., ['sepal length (cm)', 'sepal width (cm)']).
-    n_neighbors : int, default 3
-        Number of neighbors to use for KNN.
-    
-    Returns
-    -------
-    accuracy : float
-        The accuracy of the model on the test set.
-    """
-    # Load Iris dataset
-    iris = datasets.load_iris()
-    X = iris.data[:, [iris.feature_names.index(feature) for feature in features]]
-    y = iris.target
-    
-    # Split the dataset into training set and test set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # Feature scaling
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    
-    # Create KNN model
-    knn = KNeighborsClassifier(n_neighbors=n_neighbors)
-    
-    # Train the model using the training sets
-    knn.fit(X_train, y_train)
-    
-    # Predict the response for test dataset
-    y_pred = knn.predict(X_test)
-    
-    # Model Accuracy
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"Accuracy with features {features} and {n_neighbors} neighbors: {accuracy}")
-    return accuracy
+st.write('# Decision Tree Model on Iris Dataset')
+
+################################################################################
+# Main content
+################################################################################
+
+main_content = SimpleNamespace()
+
+main_content.features = st.multiselect(
+    'Select feature(s)',
+    iris_toy_2.available_features,
+    [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
+    key='main_content_features',
+)
+
+if len(main_content.features) > 0:
+    main_content.accuracies = [
+        iris_toy_2.train_decision_tree_iris(main_content.features)
+    ]
+
+    st.line_chart(
+        pd.DataFrame({
+            'accuracies': main_content.accuracies,
+        }),
+        y='accuracies'
+    )
+
+else:
+    st.warning('Please select at least one feature')
+
+################################################################################
+# Calculator sidebar
+################################################################################
+
+calculator = SimpleNamespace()
+
+with st.sidebar:
+    st.write('## Calculator')
+
+    calculator.features = st.multiselect(
+        'Select feature(s)',
+        iris_toy_2.available_features,
+        [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
+        key='calculator_features',
+    )
+
+    st.write('---')
+
+    is_train = st.button('Train model')
+    is_auto_train = st.checkbox('Auto train', value=True)
+
+    if is_train or is_auto_train:
+        if len(calculator.features) == 0:
+            st.warning('Please select at least one feature')
+
+        accuracy = iris_toy_2.train_decision_tree_iris(calculator.features)
+        st.write(f'Accuracy: {accuracy:.6f}')
