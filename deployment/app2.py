@@ -1,65 +1,40 @@
-from types import SimpleNamespace
+# bases on https://discuss.streamlit.io/t/display-svg/172
 
-import pandas as pd
 import streamlit as st
-import iris_toy_2
+from sklearn.datasets import *
+from sklearn.tree import DecisionTreeClassifier
+from dtreeviz.trees import dtreeviz
+import base64
 
-st.set_page_config(page_title='Trust UI Prototype')
+def decisionTreeViz():
+    classifier = DecisionTreeClassifier(max_depth=3)  
+    iris = load_iris()
+    classifier.fit(iris.data, iris.target)
 
-st.write('# Decision Tree on Iris Dataset')
+    viz = dtreeviz(classifier,
+                iris.data,
+                iris.target,
+                target_name='variety',
+                feature_names=iris.feature_names,
+                class_names=["setosa","versicolor","virginica"]  # need class_names for classifier
+                )
+    return viz
 
-################################################################################
-# Main content
-################################################################################
+def svg_write(svg, center=True):
+    """
+    Disable center to left-margin align like other objects.
+    """
+    # Encode as base 64
+    b64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
 
-main_content = SimpleNamespace()
+    # Add some CSS on top
+    css_justify = "center" if center else "left"
+    css = f'<p style="text-align:center; display: flex; justify-content: {css_justify};">'
+    html = f'{css}<img src="data:image/svg+xml;base64,{b64}"/>'
 
-main_content.features = st.multiselect(
-    'Select feature(s)',
-    iris_toy_2.available_features,
-    [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
-    key='main_content_features',
-)
+    # Write the HTML
+    st.write(html, unsafe_allow_html=True)
 
-if len(main_content.features) > 0:
-    main_content.accuracies = [
-        iris_toy_2.train_decision_tree_iris(main_content.features)
-    ]
-
-    st.line_chart(
-        pd.DataFrame({
-            'accuracies': main_content.accuracies,
-        }),
-        y='accuracies'
-    )
-
-else:
-    st.warning('Please select at least one feature')
-
-################################################################################
-# Calculator sidebar
-################################################################################
-
-calculator = SimpleNamespace()
-
-with st.sidebar:
-    st.write('## Calculator')
-
-    calculator.features = st.multiselect(
-        'Select feature(s)',
-        iris_toy_2.available_features,
-        [iris_toy_2.available_features[0], iris_toy_2.available_features[2]],
-        key='calculator_features',
-    )
-
-    st.write('---')
-
-    is_train = st.button('Train model')
-    is_auto_train = st.checkbox('Auto train', value=True)
-
-    if is_train or is_auto_train:
-        if len(calculator.features) == 0:
-            st.warning('Please select at least one feature')
-
-        accuracy = iris_toy_2.train_decision_tree_iris(calculator.features)
-        st.write(f'Accuracy: {accuracy:.6f}')
+viz=decisionTreeViz()
+svg=viz.svg()
+svg_write(svg)
