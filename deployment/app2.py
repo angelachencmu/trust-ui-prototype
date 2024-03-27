@@ -3,7 +3,7 @@
 import streamlit as st
 from sklearn.datasets import *
 from sklearn.tree import DecisionTreeClassifier
-import dtreeviz
+from dtreeviz.trees import dtreeviz
 import base64
 
 def decisionTreeViz():
@@ -11,7 +11,7 @@ def decisionTreeViz():
     iris = load_iris()
     classifier.fit(iris.data, iris.target)
 
-    viz = dtreeviz.model(classifier,
+    viz = dtreeviz(classifier,
                 iris.data,
                 iris.target,
                 target_name='variety',
@@ -36,5 +36,5 @@ def svg_write(svg, center=True):
     st.write(html, unsafe_allow_html=True)
 
 viz=decisionTreeViz()
-svg=viz.view()
-svg_write(svg.svg())
+svg=viz.svg()
+svg_write(svg)
