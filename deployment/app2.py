@@ -37,4 +37,4 @@ def svg_write(svg, center=True):
 
 viz=decisionTreeViz()
 svg=viz.view()
-svg_write(svg)
+svg_write(svg.svg())
