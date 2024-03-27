@@ -3,7 +3,7 @@
 import streamlit as st
 from sklearn.datasets import *
 from sklearn.tree import DecisionTreeClassifier
-from dtreeviz.trees import dtreeviz
+import dtreeviz
 import base64
 
 def decisionTreeViz():
@@ -11,7 +11,7 @@ def decisionTreeViz():
     iris = load_iris()
     classifier.fit(iris.data, iris.target)
 
-    viz = dtreeviz(classifier,
+    viz = dtreeviz.model(classifier,
                 iris.data,
                 iris.target,
                 target_name='variety',
