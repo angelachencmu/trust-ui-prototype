@@ -36,5 +36,5 @@ def svg_write(svg, center=True):
     st.write(html, unsafe_allow_html=True)
 
 viz=decisionTreeViz()
-svg=viz.svg()
+svg=viz.view()
 svg_write(svg)
