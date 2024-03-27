@@ -5,5 +5,4 @@ pandas
 pytest
 scikit-learn
 streamlit
-dtreeviz
-graphviz
+dtreeviz==1.1.3
