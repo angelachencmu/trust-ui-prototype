@@ -15,7 +15,7 @@ def draw_meshgrid():
     return XX, YY, input_array
 
 iris = load_iris()
-X = iris.data[:, :]  # we only take the first two features.
+X = iris.data[:, :2]  # we only take the first two features.
 y = iris.target
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
