@@ -26,8 +26,12 @@ species = st.multiselect('Show iris per variety?', df['variety'].unique())
 
 # Filter dataframe
 new_df2 = df[(df['variety'].isin(species))][feature]
-fig2 = px.histogram(new_df2, x=feature, color="variety", marginal="rug")
-st.plotly_chart(fig2)
+
+if not new_df2.empty:
+    fig2 = px.histogram(new_df2, x=feature, color="variety", marginal="rug")
+    st.plotly_chart(fig2)
+else:
+    st.write("No data selected.")
 
 st.subheader('Machine Learning models')
 from sklearn.model_selection import train_test_split
