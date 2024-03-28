@@ -53,14 +53,22 @@ classifier = st.selectbox('Which algorithm?', alg)
 
 if classifier == 'Decision Tree':
     st.sidebar.markdown("# Decision Tree Classifier")
-    criterion = st.sidebar.selectbox('Criterion', ('gini', 'entropy'))
-    splitter = st.sidebar.selectbox('Splitter', ('best', 'random'))
-    max_depth = int(st.sidebar.number_input('Max Depth'))
-    min_samples_split = st.sidebar.slider('Min Samples Split', 1, X_train.shape[0], 2, key=1234)
-    min_samples_leaf = st.sidebar.slider('Min Samples Leaf', 1, X_train.shape[0], 1, key=1235)
-    max_features = st.sidebar.slider('Max Features', 1, 4, 4, key=1236)
-    max_leaf_nodes = int(st.sidebar.number_input('Max Leaf Nodes'))
-    min_impurity_decrease = st.sidebar.number_input('Min Impurity Decrease')
+    criterion = st.sidebar.selectbox('Criterion', ('gini', 'entropy'),
+                                     help="Function to measure the quality of a split. 'gini' for the Gini impurity and 'entropy' for the information gain.")
+    splitter = st.sidebar.selectbox('Splitter', ('best', 'random'),
+                                    help="Strategy used to choose the split at each node. 'best' selects the best split, while 'random' selects the best random split.")
+    max_depth = int(st.sidebar.number_input('Max Depth',
+                                            help="Maximum depth of the tree. If None, nodes are expanded until all leaves are pure or contain less than min_samples_split samples."))
+    min_samples_split = st.sidebar.slider('Min Samples Split', 1, X_train.shape[0], 2, key=1234,
+                                          help="Minimum number of samples required to split an internal node.")
+    min_samples_leaf = st.sidebar.slider('Min Samples Leaf', 1, X_train.shape[0], 1, key=1235,
+                                         help="Minimum number of samples required to be at a leaf node.")
+    max_features = st.sidebar.slider('Max Features', 1, 4, 4, key=1236,
+                                     help="Number of features to consider when looking for the best split. If 'auto', sqrt(n_features) is used.")
+    max_leaf_nodes = int(st.sidebar.number_input('Max Leaf Nodes',
+                                                 help="Maximum number of leaf nodes. If None, unlimited number of leaf nodes."))
+    min_impurity_decrease = st.sidebar.number_input('Min Impurity Decrease',
+                                                    help="A node will be split if this split induces a decrease of the impurity greater than or equal to this value.")
 
     if max_depth == 0:
         max_depth = None
