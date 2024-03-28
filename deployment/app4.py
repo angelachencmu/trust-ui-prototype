@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import seaborn as sns
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -12,7 +8,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.tree import export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
 
-st.title('Iris Classifier')
+st.title('Iris')
 
 # Load the Iris dataset
 iris = load_iris()
@@ -25,27 +21,7 @@ df['variety'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 if st.checkbox('Show dataframe'):
     st.write(df)
 
-# Allow users to hide the histogram section
-show_histogram = st.checkbox('Show histogram', value=True)
-
-if show_histogram:
-    st.subheader('Histogram')
-    feature = st.selectbox('Which feature?', df.columns[0:4])
-    species = st.multiselect('Show iris per variety?', df['variety'].unique())
-
-    # Filter dataframe
-    new_df2 = df[(df['variety'].isin(species))][feature]
-
-    if not new_df2.empty:
-        if 'variety' in df.columns:
-            fig2 = px.histogram(df[(df['variety'].isin(species))], x=feature, color="variety", marginal="rug")
-        else:
-            fig2 = px.histogram(new_df2, x=feature, marginal="rug")
-        st.plotly_chart(fig2)
-    else:
-        st.write("No data selected.")
-
-st.subheader('Machine Learning Models')
+st.subheader('Machine Learning models')
 
 # Allow users to choose features to train
 selected_features = st.multiselect('Select features to train', iris.feature_names)
