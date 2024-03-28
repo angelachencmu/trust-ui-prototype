@@ -109,22 +109,23 @@ if len(selected_features) > 0:
                                                   help="Minimum number of samples required to split an internal node.")
             min_samples_leaf = st.sidebar.slider('Min Samples Leaf', 1, X_train.shape[0], 1, key=1245,
                                                  help="Minimum number of samples required to be at a leaf node.")
-            max_features = st.sidebar.selectbox('Max Features', ('auto', 'sqrt', 'log2'), key=1246,
-                                                help="Number of features to consider when looking for the best split. If 'auto', sqrt(n_features) is used.")
+            max_features = st.sidebar.selectbox('Max Features', ('sqrt', 'log2'), key=1246,
+                                                help="Number of features to consider when looking for the best split.")
             bootstrap = st.sidebar.selectbox('Bootstrap', (True, False), key=1247,
                                              help="Whether bootstrap samples are used when building trees. If False, the whole dataset is used to build each tree.")
             random_state = int(st.sidebar.number_input('Random State', value=42, key=1248,
                                                        help="Controls the randomness of the bootstrapping of the samples used when building trees."))
-
+        
             if max_depth == 0:
                 max_depth = None
-
+        
             rfc = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
                                          min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
                                          max_features=max_features, bootstrap=bootstrap, random_state=random_state)
             rfc.fit(X_train, y_train)
             acc = rfc.score(X_test, y_test)
             st.write('Accuracy: ', acc)
+
 
     else:
         if classifier == 'Decision Tree':
