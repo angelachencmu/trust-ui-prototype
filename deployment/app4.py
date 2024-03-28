@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.tree import export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
 
-st.title('Iris')
+st.title('Classifying Iris')
 
 # Load the Iris dataset
 iris = load_iris()
