@@ -5,6 +5,8 @@ import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+from sklearn.datasets import load_iris
+
  
 st.title('Iris')
 
