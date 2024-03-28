@@ -7,8 +7,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.tree import export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 
-st.title('Iris Classifier')
+st.title('Iris')
 
 # Load the Iris dataset
 iris = load_iris()
@@ -21,7 +22,7 @@ df['variety'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 if st.checkbox('Show dataframe'):
     st.write(df)
 
-st.subheader('Machine Learning Models')
+st.subheader('Machine Learning models')
 
 # Allow users to choose features to train
 selected_features = st.multiselect('Select features to train', iris.feature_names)
@@ -32,7 +33,7 @@ if len(selected_features) > 0:
 
     X_train, X_test, y_train, y_test = train_test_split(features, labels, train_size=0.7, random_state=1)
 
-    alg = ['Decision Tree', 'K-Nearest Neighbors']
+    alg = ['Decision Tree', 'K-Nearest Neighbors', 'Random Forest']
     classifier = st.selectbox('Which algorithm?', alg)
 
     # Allow users to hide the sidebar
@@ -95,6 +96,36 @@ if len(selected_features) > 0:
             knn.fit(X_train, y_train)
             acc = knn.score(X_test, y_test)
             st.write('Accuracy: ', acc)
+
+        elif classifier == 'Random Forest':
+            st.sidebar.markdown("# Random Forest Classifier")
+            n_estimators = st.sidebar.slider('Number of Estimators (n_estimators)', 1, 200, 100, key=1241,
+                                             help="Number of trees in the forest.")
+            criterion = st.sidebar.selectbox('Criterion', ('gini', 'entropy'), key=1242,
+                                             help="Function to measure the quality of a split. 'gini' for the Gini impurity and 'entropy' for the information gain.")
+            max_depth = int(st.sidebar.number_input('Max Depth', key=1243,
+                                                    help="Maximum depth of the tree. If None, nodes are expanded until all leaves are pure or contain less than min_samples_split samples."))
+            min_samples_split = st.sidebar.slider('Min Samples Split', 1, X_train.shape[0], 2, key=1244,
+                                                  help="Minimum number of samples required to split an internal node.")
+            min_samples_leaf = st.sidebar.slider('Min Samples Leaf', 1, X_train.shape[0], 1, key=1245,
+                                                 help="Minimum number of samples required to be at a leaf node.")
+            max_features = st.sidebar.selectbox('Max Features', ('auto', 'sqrt', 'log2'), key=1246,
+                                                help="Number of features to consider when looking for the best split. If 'auto', sqrt(n_features) is used.")
+            bootstrap = st.sidebar.selectbox('Bootstrap', (True, False), key=1247,
+                                             help="Whether bootstrap samples are used when building trees. If False, the whole dataset is used to build each tree.")
+            random_state = int(st.sidebar.number_input('Random State', value=42, key=1248,
+                                                       help="Controls the randomness of the bootstrapping of the samples used when building trees."))
+
+            if max_depth == 0:
+                max_depth = None
+
+            rfc = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
+                                         min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                         max_features=max_features, bootstrap=bootstrap, random_state=random_state)
+            rfc.fit(X_train, y_train)
+            acc = rfc.score(X_test, y_test)
+            st.write('Accuracy: ', acc)
+
     else:
         if classifier == 'Decision Tree':
             criterion = 'gini'
@@ -130,5 +161,23 @@ if len(selected_features) > 0:
             knn.fit(X_train, y_train)
             acc = knn.score(X_test, y_test)
             st.write('Accuracy: ', acc)
+
+        elif classifier == 'Random Forest':
+            n_estimators = 100
+            criterion = 'gini'
+            max_depth = None
+            min_samples_split = 2
+            min_samples_leaf = 1
+            max_features = 'auto'
+            bootstrap = True
+            random_state = 42
+
+            rfc = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
+                                         min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                         max_features=max_features, bootstrap=bootstrap, random_state=random_state)
+            rfc.fit(X_train, y_train)
+            acc = rfc.score(X_test, y_test)
+            st.write('Accuracy: ', acc)
+
 else:
     st.write("Please select at least one feature to train the models.")
