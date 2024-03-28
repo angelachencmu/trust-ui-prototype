@@ -7,9 +7,8 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
  
 st.title('Iris')
- 
- 
-df = pd.read_csv("iris.csv")
+
+df = load_iris()
  
 if st.checkbox('Show dataframe'):
     st.write(df)
