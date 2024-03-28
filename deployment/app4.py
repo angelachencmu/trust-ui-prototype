@@ -28,7 +28,10 @@ species = st.multiselect('Show iris per variety?', df['variety'].unique())
 new_df2 = df[(df['variety'].isin(species))][feature]
 
 if not new_df2.empty:
-    fig2 = px.histogram(new_df2, x=feature, color="variety", marginal="rug")
+    if 'variety' in df.columns:
+        fig2 = px.histogram(df[(df['variety'].isin(species))], x=feature, color="variety", marginal="rug")
+    else:
+        fig2 = px.histogram(new_df2, x=feature, marginal="rug")
     st.plotly_chart(fig2)
 else:
     st.write("No data selected.")
