@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.tree import export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
 
-st.title('Iris')
+st.title('Iris Classifier')
 
 # Load the Iris dataset
 iris = load_iris()
@@ -45,7 +45,7 @@ if show_histogram:
     else:
         st.write("No data selected.")
 
-st.subheader('Machine Learning models')
+st.subheader('Machine Learning Models')
 
 # Allow users to choose features to train
 selected_features = st.multiselect('Select features to train', iris.feature_names)
