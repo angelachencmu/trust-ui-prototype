@@ -8,3 +8,4 @@ streamlit
 dtreeviz==1.1.3
 graphviz
 seaborn
+plotly
