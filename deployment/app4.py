@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.tree import export_graphviz
 
@@ -74,9 +74,6 @@ if classifier == 'Decision Tree':
     dtc.fit(X_train, y_train)
     acc = dtc.score(X_test, y_test)
     st.write('Accuracy: ', acc)
-    pred_dtc = dtc.predict(X_test)
-    cm_dtc = confusion_matrix(y_test, pred_dtc)
-    st.write('Confusion matrix: ', cm_dtc)
     tree = export_graphviz(dtc, feature_names=iris.feature_names)
     st.graphviz_chart(tree)
 
@@ -85,6 +82,3 @@ elif classifier == 'Support Vector Machine':
     svm.fit(X_train, y_train)
     acc = svm.score(X_test, y_test)
     st.write('Accuracy: ', acc)
-    pred_svm = svm.predict(X_test)
-    cm = confusion_matrix(y_test, pred_svm)
-    st.write('Confusion matrix: ', cm)
