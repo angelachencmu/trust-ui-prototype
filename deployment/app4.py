@@ -8,7 +8,12 @@ import plotly.graph_objects as go
  
 st.title('Iris')
 
-df = load_iris()
+# Load the Iris dataset
+iris = load_iris()
+
+# Create a DataFrame
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df['target'] = iris.target
  
 if st.checkbox('Show dataframe'):
     st.write(df)
