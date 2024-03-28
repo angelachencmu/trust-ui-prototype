@@ -25,21 +25,25 @@ df['variety'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 if st.checkbox('Show dataframe'):
     st.write(df)
 
-st.subheader('Histogram')
-feature = st.selectbox('Which feature?', df.columns[0:4])
-species = st.multiselect('Show iris per variety?', df['variety'].unique())
+# Allow users to hide the histogram section
+show_histogram = st.checkbox('Show histogram', value=True)
 
-# Filter dataframe
-new_df2 = df[(df['variety'].isin(species))][feature]
+if show_histogram:
+    st.subheader('Histogram')
+    feature = st.selectbox('Which feature?', df.columns[0:4])
+    species = st.multiselect('Show iris per variety?', df['variety'].unique())
 
-if not new_df2.empty:
-    if 'variety' in df.columns:
-        fig2 = px.histogram(df[(df['variety'].isin(species))], x=feature, color="variety", marginal="rug")
+    # Filter dataframe
+    new_df2 = df[(df['variety'].isin(species))][feature]
+
+    if not new_df2.empty:
+        if 'variety' in df.columns:
+            fig2 = px.histogram(df[(df['variety'].isin(species))], x=feature, color="variety", marginal="rug")
+        else:
+            fig2 = px.histogram(new_df2, x=feature, marginal="rug")
+        st.plotly_chart(fig2)
     else:
-        fig2 = px.histogram(new_df2, x=feature, marginal="rug")
-    st.plotly_chart(fig2)
-else:
-    st.write("No data selected.")
+        st.write("No data selected.")
 
 st.subheader('Machine Learning models')
 
