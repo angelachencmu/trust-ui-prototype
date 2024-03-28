@@ -79,14 +79,23 @@ if classifier == 'Decision Tree':
 
 elif classifier == 'K-Nearest Neighbors':
     st.sidebar.markdown("# K-Nearest Neighbors")
-    n_neighbors = st.sidebar.slider('Number of Neighbors', 1, 15, 5, key=1237)
-    weights = st.sidebar.selectbox('Weights', ('uniform', 'distance'))
-    algorithm = st.sidebar.selectbox('Algorithm', ('auto', 'ball_tree', 'kd_tree', 'brute'))
-    leaf_size = st.sidebar.slider('Leaf Size', 1, 50, 30, key=1238)
-    p = st.sidebar.slider('p', 1, 5, 2, key=1239)
+    n_neighbors = st.sidebar.slider('Number of Neighbors (n_neighbors)', 1, 15, 5, key=1237,
+                                    help="Number of neighbors to use for classification.")
+    weights = st.sidebar.selectbox('Weights', ('uniform', 'distance'),
+                                   help="Weight function used in prediction. 'uniform' assigns equal weights to all neighbors, while 'distance' assigns weights proportional to the inverse of the distance.")
+    algorithm = st.sidebar.selectbox('Algorithm', ('auto', 'ball_tree', 'kd_tree', 'brute'),
+                                     help="Algorithm used to compute the nearest neighbors.")
+    leaf_size = st.sidebar.slider('Leaf Size', 1, 50, 30, key=1238,
+                                  help="Leaf size passed to BallTree or KDTree algorithms.")
+    p = st.sidebar.slider('p (Power Parameter)', 1, 5, 2, key=1239,
+                          help="Power parameter for the Minkowski metric.")
+    metric = st.sidebar.selectbox('Metric', ('euclidean', 'manhattan', 'minkowski', 'chebyshev'),
+                                  help="Distance metric to use for the tree.")
+    n_jobs = st.sidebar.slider('Number of Jobs (n_jobs)', -1, 4, 1, key=1240,
+                               help="Number of parallel jobs to run for neighbors search. -1 uses all available processors.")
 
     knn = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm,
-                               leaf_size=leaf_size, p=p)
+                               leaf_size=leaf_size, p=p, metric=metric, n_jobs=n_jobs)
     knn.fit(X_train, y_train)
     acc = knn.score(X_test, y_test)
     st.write('Accuracy: ', acc)
