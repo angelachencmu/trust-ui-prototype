@@ -1,92 +1,73 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-from sklearn.datasets import load_iris
+import streamlit as st
+import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import confusion_matrix, accuracy_score
-from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
 from sklearn.tree import export_graphviz
 
-st.title('Iris Dataset Analysis')
+def draw_meshgrid():
+    a = np.arange(start=X[:, 0].min() - 1, stop=X[:, 0].max() + 1, step=0.01)
+    b = np.arange(start=X[:, 1].min() - 1, stop=X[:, 1].max() + 1, step=0.01)
+    XX, YY = np.meshgrid(a, b)
+    input_array = np.array([XX.ravel(), YY.ravel()]).T
+    return XX, YY, input_array
 
-# Load the Iris dataset
 iris = load_iris()
+X = iris.data[:, :2]  # we only take the first two features.
+y = iris.target
 
-# Create a DataFrame
-df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
-df['target'] = iris.target
-df['variety'] = pd.Categorical.from_codes(iris.target, iris.target_names)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
-if st.checkbox('Show dataframe'):
-    st.write(df)
+plt.style.use('fivethirtyeight')
 
-st.subheader('Histogram')
-feature = st.selectbox('Which feature?', df.columns[0:4])
-species = st.multiselect('Show iris per variety?', df['variety'].unique())
+st.sidebar.markdown("# Decision Tree Classifier")
 
-# Filter dataframe
-new_df2 = df[(df['variety'].isin(species))][feature]
+criterion = st.sidebar.selectbox(
+    'Criterion',
+    ('gini', 'entropy')
+)
 
-if not new_df2.empty:
-    if 'variety' in df.columns:
-        fig2 = px.histogram(df[(df['variety'].isin(species))], x=feature, color="variety", marginal="rug")
-    else:
-        fig2 = px.histogram(new_df2, x=feature, marginal="rug")
-    st.plotly_chart(fig2)
-else:
-    st.write("No data selected.")
+splitter = st.sidebar.selectbox(
+    'Splitter',
+    ('best', 'random')
+)
 
-st.subheader('Machine Learning Models')
+max_depth = int(st.sidebar.number_input('Max Depth'))
+min_samples_split = st.sidebar.slider('Min Samples Split', 1, X_train.shape[0], 2, key=1234)
+min_samples_leaf = st.sidebar.slider('Min Samples Leaf', 1, X_train.shape[0], 1, key=1235)
+max_features = st.sidebar.slider('Max Features', 1, 2, 2, key=1236)
+max_leaf_nodes = int(st.sidebar.number_input('Max Leaf Nodes'))
+min_impurity_decrease = st.sidebar.number_input('Min Impurity Decrease')
 
-features = df[['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']].values
-labels = df['variety'].values
+# Load initial graph
+fig, ax = plt.subplots()
+# Plot initial graph
+ax.scatter(X[:, 0], X[:, 1], c=y, cmap='rainbow')
+orig = st.pyplot(fig)
 
-X_train, X_test, y_train, y_test = train_test_split(features, labels, train_size=0.7, random_state=1)
+if st.sidebar.button('Run Algorithm'):
+    orig.empty()
+    if max_depth == 0:
+        max_depth = None
+    if max_leaf_nodes == 0:
+        max_leaf_nodes = None
 
-alg = ['Decision Tree', 'Support Vector Machine']
-classifier = st.selectbox('Which algorithm?', alg)
+    clf = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth, random_state=42,
+                                 min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                 max_features=max_features, max_leaf_nodes=max_leaf_nodes,
+                                 min_impurity_decrease=min_impurity_decrease)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
-if classifier == 'Decision Tree':
-    criterion = st.sidebar.selectbox('Criterion', ('gini', 'entropy'))
-    splitter = st.sidebar.selectbox('Splitter', ('best', 'random'))
-    max_depth = st.sidebar.slider('Max Depth', 1, 50, 5)
-    min_samples_split = st.sidebar.slider('Min Samples Split', 1, 10, 2)
-    min_samples_leaf = st.sidebar.slider('Min Samples Leaf', 1, 10, 1)
+    XX, YY, input_array = draw_meshgrid()
+    labels = clf.predict(input_array)
+    ax.contourf(XX, YY, labels.reshape(XX.shape), alpha=0.5, cmap='rainbow')
+    plt.xlabel("Sepal Length")
+    plt.ylabel("Sepal Width")
+    orig = st.pyplot(fig)
 
-    dtc = DecisionTreeClassifier(
-        criterion=criterion,
-        splitter=splitter,
-        max_depth=max_depth,
-        min_samples_split=min_samples_split,
-        min_samples_leaf=min_samples_leaf,
-        random_state=1
-    )
-    dtc.fit(X_train, y_train)
-    acc = dtc.score(X_test, y_test)
-    st.write('Accuracy: ', acc)
-    y_pred = dtc.predict(X_test)
-    cm_dtc = confusion_matrix(y_test, y_pred)
-    st.write('Confusion matrix: ', cm_dtc)
-
-    # Plot the decision tree
-    fig_tree, ax_tree = plt.subplots(figsize=(15, 10))
-    export_graphviz(dtc, out_file=None, filled=True, rounded=True, feature_names=iris.feature_names, class_names=iris.target_names)
-    st.pyplot(fig_tree)
-
-elif classifier == 'Support Vector Machine':
-    kernel = st.sidebar.selectbox('Kernel', ('linear', 'poly', 'rbf', 'sigmoid'))
-    C = st.sidebar.slider('C', 0.1, 10.0, 1.0)
-    gamma = st.sidebar.selectbox('Gamma', ('scale', 'auto'))
-
-    svm = SVC(kernel=kernel, C=C, gamma=gamma, random_state=1)
-    svm.fit(X_train, y_train)
-    acc = svm.score(X_test, y_test)
-    st.write('Accuracy: ', acc)
-    y_pred = svm.predict(X_test)
-    cm_svm = confusion_matrix(y_test, y_pred)
-    st.write('Confusion matrix: ', cm_svm)
+    st.subheader("Accuracy for Decision Tree " + str(round(accuracy_score(y_test, y_pred), 2)))
+    tree = export_graphviz(clf, feature_names=["Sepal Length", "Sepal Width"])
+    st.graphviz_chart(tree)
