@@ -9,7 +9,7 @@ from sklearn.tree import export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-st.title('Iris')
+st.title('Iris Classifier')
 
 # Load the Iris dataset
 iris = load_iris()
@@ -22,7 +22,7 @@ df['variety'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 if st.checkbox('Show dataframe'):
     st.write(df)
 
-st.subheader('Machine Learning models')
+st.subheader('Machine Learning Models')
 
 # Allow users to choose features to train
 selected_features = st.multiselect('Select features to train', iris.feature_names)
