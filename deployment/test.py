@@ -160,19 +160,25 @@ if len(selected_features) > 0:
                 writer.writerow(['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
             writer.writerows(interactions)
 
-# Display the current interaction log as a table
-if len(interactions) > 0:
-    st.subheader('Current Interaction Log')
-    log_df = pd.DataFrame(interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
-    st.table(log_df)
+    # Button to select new features and retrain the model
+    if st.button('Select New Features and Retrain', key=f'retrain_{iteration_counter}'):
+        iteration_counter += 1
+        selected_features = st.multiselect('Select features to train', feature_names, key=f'feature_selection_{iteration_counter}')
 
-    # Allow users to download the CSV file
-    csv_data = log_df.to_csv(index=False)
-    st.download_button(
-        label="Download CSV",
-        data=csv_data,
-        file_name=f"{user_id}_interactions.csv",
-        mime='text/csv'
-    )
-else:
-    st.write("No interactions recorded.")
+# Display the interaction log as a table if the checkbox is selected
+if st.checkbox('Show interaction log'):
+    if len(interactions) > 0:
+        st.subheader('Interaction Log')
+        log_df = pd.DataFrame(interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
+        st.table(log_df)
+
+        # Allow users to download the CSV file
+        csv_data = log_df.to_csv(index=False)
+        st.download_button(
+            label="Download CSV",
+            data=csv_data,
+            file_name=f"{user_id}_interactions.csv",
+            mime='text/csv'
+        )
+    else:
+        st.write("No interactions recorded.")
