@@ -194,11 +194,5 @@ while True:
 
     iteration_counter += 1
 
-# Display the interaction log as a table
-if len(interactions) > 0:
-    st.subheader('Interaction Log')
-    log_df = pd.DataFrame(interactions, columns=['Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
-    st.table(log_df)
-    log_interactions(interactions)  # Append interactions to the CSV file
-else:
-    st.write("No interactions recorded.")
+# Append interactions to the CSV file without displaying the table
+log_interactions(interactions)
