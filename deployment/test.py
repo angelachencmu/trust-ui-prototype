@@ -155,7 +155,7 @@ if len(selected_features) > 0:
 
         start_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time))
         end_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_time))
-        st.session_state.interactions.append([user_id, start_time_str, end_time_str, duration, ','.join(selected_features), classifier, acc, dataset_option])  # Store the interaction in the session state with dataset information
+        st.session_state.interactions.append([user_id, start_time_str, end_time_str, duration, dataset_option, ','.join(selected_features), classifier, acc])  # Store the interaction in the session state with dataset information moved before algorithm
 
         st.write('Accuracy: ', acc)
 
@@ -165,7 +165,7 @@ if len(selected_features) > 0:
         with open(csv_file, 'a', newline='') as file:
             writer = csv.writer(file)
             if not file_exists:
-                writer.writerow(['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Dataset', 'Algorithm', 'Accuracy']) 
+                writer.writerow(['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Dataset', 'Selected Features', 'Algorithm', 'Accuracy'])  # Include 'Dataset' column before 'Algorithm'
             writer.writerows(st.session_state.interactions)  # Write interactions from the session state
 
         model_trained = True  # Set the flag to indicate that a model has been trained
@@ -175,7 +175,7 @@ if len(selected_features) > 0:
 if st.checkbox('Show interaction log'):
     st.subheader('Interaction Log')
     if len(st.session_state.interactions) > 0:
-        log_df = pd.DataFrame(st.session_state.interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Dataset', 'Algorithm', 'Accuracy', 'Dataset'])  
+        log_df = pd.DataFrame(st.session_state.interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Dataset', 'Selected Features', 'Algorithm', 'Accuracy'])  # Include 'Dataset' column before 'Algorithm'
         st.table(log_df)
 
         # Allow users to download the CSV file
