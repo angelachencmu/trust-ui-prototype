@@ -12,9 +12,8 @@ import time
 import csv
 
 def log_interactions(interactions):
-    with open('interaction_log.csv', 'w', newline='') as file:
+    with open('interaction_log.csv', 'a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Start Time', 'End Time', 'Duration', 'Selected Features'])
         writer.writerows(interactions)
 
 st.title('Breast Cancer Classifier')
@@ -50,7 +49,7 @@ while True:
         classifier = st.selectbox('Which algorithm?', alg)
 
         # Allow users to show/hide hyperparameters
-        show_hyperparameters = st.checkbox('Show Hyperparameters', value=True)
+        show_hyperparameters = st.checkbox('Show hyperparameters', value=True)
 
         if show_hyperparameters:
             if classifier == 'Decision Tree':
@@ -81,11 +80,6 @@ while True:
                                              min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
                                              max_features=max_features, max_leaf_nodes=max_leaf_nodes,
                                              min_impurity_decrease=min_impurity_decrease)
-                dtc.fit(X_train, y_train)
-                acc = dtc.score(X_test, y_test)
-                st.write('Accuracy: ', acc)
-                tree = export_graphviz(dtc, feature_names=selected_features)
-                st.graphviz_chart(tree)
 
             elif classifier == 'K-Nearest Neighbors':
                 st.sidebar.markdown("# K-Nearest Neighbors")
@@ -106,9 +100,6 @@ while True:
 
                 knn = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm,
                                            leaf_size=leaf_size, p=p, metric=metric, n_jobs=n_jobs)
-                knn.fit(X_train, y_train)
-                acc = knn.score(X_test, y_test)
-                st.write('Accuracy: ', acc)
 
             elif classifier == 'Random Forest':
                 st.sidebar.markdown("# Random Forest Classifier")
@@ -135,9 +126,7 @@ while True:
                 rfc = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
                                              min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
                                              max_features=max_features, bootstrap=bootstrap, random_state=random_state)
-                rfc.fit(X_train, y_train)
-                acc = rfc.score(X_test, y_test)
-                st.write('Accuracy: ', acc)
+
         else:
             if classifier == 'Decision Tree':
                 criterion = 'gini'
@@ -153,11 +142,6 @@ while True:
                                              min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
                                              max_features=max_features, max_leaf_nodes=max_leaf_nodes,
                                              min_impurity_decrease=min_impurity_decrease)
-                dtc.fit(X_train, y_train)
-                acc = dtc.score(X_test, y_test)
-                st.write('Accuracy: ', acc)
-                tree = export_graphviz(dtc, feature_names=selected_features)
-                st.graphviz_chart(tree)
 
             elif classifier == 'K-Nearest Neighbors':
                 n_neighbors = 5
@@ -170,9 +154,6 @@ while True:
 
                 knn = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm,
                                            leaf_size=leaf_size, p=p, metric=metric, n_jobs=n_jobs)
-                knn.fit(X_train, y_train)
-                acc = knn.score(X_test, y_test)
-                st.write('Accuracy: ', acc)
 
             elif classifier == 'Random Forest':
                 n_estimators = 100
@@ -180,36 +161,43 @@ while True:
                 max_depth = None
                 min_samples_split = 2
                 min_samples_leaf = 1
-                max_features = 'sqrt'  # Updated default value
+                max_features = 'sqrt'
                 bootstrap = True
                 random_state = 42
 
                 rfc = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
                                              min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
                                              max_features=max_features, bootstrap=bootstrap, random_state=random_state)
+
+        if st.button('Train Model'):
+            if classifier == 'Decision Tree':
+                dtc.fit(X_train, y_train)
+                acc = dtc.score(X_test, y_test)
+                tree = export_graphviz(dtc, feature_names=selected_features)
+                st.graphviz_chart(tree)
+            elif classifier == 'K-Nearest Neighbors':
+                knn.fit(X_train, y_train)
+                acc = knn.score(X_test, y_test)
+            elif classifier == 'Random Forest':
                 rfc.fit(X_train, y_train)
                 acc = rfc.score(X_test, y_test)
-                st.write('Accuracy: ', acc)
 
-        end_time = time.time()  # Record the end time
-        duration = end_time - start_time
-        interactions.append([start_time, end_time, duration, ','.join(selected_features)])  # Store the interaction
-
+            end_time = time.time()  # Record the end time
+            duration = round(end_time - start_time, 2)
+            interactions.append([duration, ','.join(selected_features), acc])  # Store the interaction with accuracy
+            st.write('Accuracy: ', acc)
+        else:
+            break
     else:
         st.write("Please select at least one feature to train the models.")
         break
 
-    if st.button('Train Model'):
-        continue
-    else:
-        break
-
-log_interactions(interactions)  # Write all interactions to the CSV file
+log_interactions(interactions)  # Append interactions to the CSV file
 
 # Display the interaction log as a table
 if len(interactions) > 0:
     st.subheader('Interaction Log')
-    log_df = pd.DataFrame(interactions, columns=['Start Time', 'End Time', 'Duration', 'Selected Features'])
+    log_df = pd.read_csv('interaction_log.csv', names=['Duration (seconds)', 'Selected Features', 'Accuracy'])
     st.table(log_df)
 else:
     st.write("No interactions recorded.")
