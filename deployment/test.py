@@ -185,12 +185,11 @@ while True:
 
             end_time = time.time()  # Record the end time
             duration = round(end_time - start_time, 2)
-            interactions.append([duration, ','.join(selected_features), acc])  # Store the interaction with accuracy
+            interactions.append([duration, ','.join(selected_features), classifier, acc])  # Store the interaction with accuracy and algorithm type
             st.write('Accuracy: ', acc)
         else:
             break
     else:
-        st.write("Please select at least one feature to train the models.")
         break
 
     iteration_counter += 1
@@ -200,7 +199,7 @@ log_interactions(interactions)  # Append interactions to the CSV file
 # Display the interaction log as a table
 if len(interactions) > 0:
     st.subheader('Interaction Log')
-    log_df = pd.read_csv('interaction_log.csv', names=['Duration (seconds)', 'Selected Features', 'Accuracy'])
+    log_df = pd.read_csv('interaction_log.csv', names=['Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
     st.table(log_df)
 else:
     st.write("No interactions recorded.")
