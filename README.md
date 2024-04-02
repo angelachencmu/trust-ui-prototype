@@ -22,7 +22,7 @@ streamlit run deployment/test.py
 ```
 # test.py
 
-The Streamlit test.py script creates a web application designed for interacting with and evaluating machine learning models using either the Breast Cancer or Iris datasets. Here's a breakdown of its functionality and structure:
+This script creates a web application designed for interacting with and evaluating machine learning models using either the Breast Cancer or Iris datasets. Here's a breakdown of its functionality and structure:
 
 ## Title and Dataset Selection:
 It begins by setting a title for the app and offering a choice between two datasets: Breast Cancer and Iris, using a selectbox for selection.
