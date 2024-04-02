@@ -18,8 +18,9 @@ pip install -r requirements.txt
 
 Then, run the application:
 ```bash
-streamlit run deployment/app.py
+streamlit run deployment/test.py
 ```
+#test.py
 
 The Streamlit test.py script creates a web application designed for interacting with and evaluating machine learning models using either the Breast Cancer or Iris datasets. Here's a breakdown of its functionality and structure:
 
