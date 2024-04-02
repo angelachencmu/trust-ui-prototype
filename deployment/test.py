@@ -165,7 +165,7 @@ if len(selected_features) > 0:
         with open(csv_file, 'a', newline='') as file:
             writer = csv.writer(file)
             if not file_exists:
-                writer.writerow(['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy', 'Dataset'])  # Include 'Dataset' column
+                writer.writerow(['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Dataset', 'Algorithm', 'Accuracy']) 
             writer.writerows(st.session_state.interactions)  # Write interactions from the session state
 
         model_trained = True  # Set the flag to indicate that a model has been trained
@@ -175,7 +175,7 @@ if len(selected_features) > 0:
 if st.checkbox('Show interaction log'):
     st.subheader('Interaction Log')
     if len(st.session_state.interactions) > 0:
-        log_df = pd.DataFrame(st.session_state.interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy', 'Dataset'])  # Include 'Dataset' column
+        log_df = pd.DataFrame(st.session_state.interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Dataset', 'Algorithm', 'Accuracy', 'Dataset'])  
         st.table(log_df)
 
         # Allow users to download the CSV file
