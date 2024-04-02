@@ -70,3 +70,11 @@ while True:
         break
 
 log_interactions(interactions)  # Write all interactions to the CSV file
+
+# Display the interaction log as a table
+if len(interactions) > 0:
+    st.subheader('Interaction Log')
+    log_df = pd.DataFrame(interactions, columns=['Start Time', 'End Time', 'Duration', 'Selected Features'])
+    st.table(log_df)
+else:
+    st.write("No interactions recorded.")
