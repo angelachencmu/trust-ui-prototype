@@ -35,7 +35,7 @@ interactions = []
 
 while True:
     # Allow users to choose features to train
-    selected_features = st.multiselect('Select features to train', breast_cancer.feature_names)
+    selected_features = st.multiselect('Select features to train', breast_cancer.feature_names, key='feature_selection')
 
     if len(selected_features) > 0:
         start_time = time.time()  # Record the start time
