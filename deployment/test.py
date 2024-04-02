@@ -170,25 +170,20 @@ if len(selected_features) > 0:
         model_trained = True  # Set the flag to indicate that a model has been trained
         del st.session_state.start_time  # Remove the start time from session state
 
-    # Button to select new features and retrain the model (only shown after a model has been trained)
-    if model_trained:
-        if st.button('Select New Features and Retrain', key=f'retrain_{iteration_counter}'):
-            iteration_counter += 1
-            selected_features = st.multiselect('Select features to train', feature_names, key=f'feature_selection_{iteration_counter}')
+# Display the interaction log as a sidebar
+if st.sidebar.checkbox('Show interaction log'):
+    st.sidebar.subheader('Interaction Log')
+    if len(st.session_state.interactions) > 0:
+        log_df = pd.DataFrame(st.session_state.interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
+        st.sidebar.table(log_df)
 
-# Display the interaction log as a table
-st.subheader('Interaction Log')
-if len(st.session_state.interactions) > 0:
-    log_df = pd.DataFrame(st.session_state.interactions, columns=['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
-    st.table(log_df)
-
-    # Allow users to download the CSV file
-    csv_data = log_df.to_csv(index=False)
-    st.download_button(
-        label="Download CSV",
-        data=csv_data,
-        file_name=f"{user_id}_interactions.csv",
-        mime='text/csv'
-    )
-else:
-    st.write("No interactions recorded.")
+        # Allow users to download the CSV file
+        csv_data = log_df.to_csv(index=False)
+        st.sidebar.download_button(
+            label="Download CSV",
+            data=csv_data,
+            file_name=f"{user_id}_interactions.csv",
+            mime='text/csv'
+        )
+    else:
+        st.sidebar.write("No interactions recorded.")
