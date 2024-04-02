@@ -12,7 +12,7 @@ import time
 import csv
 import os
 
-st.title('Classifier App')
+st.title('Build your own classifiers!')
 
 # Dataset selection
 dataset_option = st.selectbox('Select a dataset', ('Breast Cancer', 'Iris'))
