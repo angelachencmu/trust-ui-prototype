@@ -41,6 +41,7 @@ user_id = st.text_input('Enter your user ID:')
 
 interactions = []
 iteration_counter = 0
+model_trained = False  # Flag to track if a model has been trained
 
 # Allow users to choose features to train
 selected_features = st.multiselect('Select features to train', feature_names, key=f'feature_selection_{iteration_counter}')
@@ -160,10 +161,13 @@ if len(selected_features) > 0:
                 writer.writerow(['User ID', 'Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
             writer.writerows(interactions)
 
-    # Button to select new features and retrain the model
-    if st.button('Select New Features and Retrain', key=f'retrain_{iteration_counter}'):
-        iteration_counter += 1
-        selected_features = st.multiselect('Select features to train', feature_names, key=f'feature_selection_{iteration_counter}')
+        model_trained = True  # Set the flag to indicate that a model has been trained
+
+    # Button to select new features and retrain the model (only shown after a model has been trained)
+    if model_trained:
+        if st.button('Select New Features and Retrain', key=f'retrain_{iteration_counter}'):
+            iteration_counter += 1
+            selected_features = st.multiselect('Select features to train', feature_names, key=f'feature_selection_{iteration_counter}')
 
 # Display the interaction log as a table if the checkbox is selected
 if st.checkbox('Show interaction log'):
