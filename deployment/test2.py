@@ -185,14 +185,6 @@ if len(selected_features) > 0:
         interaction_history.append([start_time_str, end_time_str, duration, ','.join(selected_features), classifier, acc])  # Store the interaction in the history
         st.write('Accuracy: ', acc)
 
-# Display the current interaction log as a table
-if len(interactions) > 0:
-    st.subheader('Current Interaction Log')
-    log_df = pd.DataFrame(interactions, columns=['Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
-    st.table(log_df)
-else:
-    st.write("No interactions recorded.")
-
 # Display the interaction history as a table
 if len(interaction_history) > 0:
     st.subheader('Interaction History')
