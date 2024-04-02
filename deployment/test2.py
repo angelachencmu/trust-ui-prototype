@@ -9,12 +9,6 @@ from sklearn.tree import export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 import time
-import csv
-
-def log_interactions(interactions):
-    with open('interaction_log.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(interactions)
 
 st.title('Breast Cancer Classifier')
 
@@ -32,6 +26,7 @@ if st.checkbox('Show dataframe'):
 st.subheader('Machine Learning Models')
 
 interactions = []
+interaction_history = []  # Store the history of interactions
 iteration_counter = 0
 
 # Allow users to choose features to train
@@ -184,15 +179,26 @@ if len(selected_features) > 0:
 
         end_time = time.time()  # Record the end time
         duration = round(end_time - start_time, 2)
-        interactions.append([duration, ','.join(selected_features), classifier, acc])  # Store the interaction with accuracy and algorithm type
+        start_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time))
+        end_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_time))
+        interactions.append([start_time_str, end_time_str, duration, ','.join(selected_features), classifier, acc])  # Store the interaction with start time, end time, accuracy, and algorithm type
+        interaction_history.append([start_time_str, end_time_str, duration, ','.join(selected_features), classifier, acc])  # Store the interaction in the history
         st.write('Accuracy: ', acc)
 
-log_interactions(interactions)  # Append interactions to the CSV file
+# Display the current interaction log as a table if the checkbox is selected
+if st.checkbox('Show current interaction log'):
+    if len(interactions) > 0:
+        st.subheader('Current Interaction Log')
+        log_df = pd.DataFrame(interactions, columns=['Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
+        st.table(log_df)
+    else:
+        st.write("No interactions recorded.")
 
-# Display the interaction log as a table
-if len(interactions) > 0:
-    st.subheader('Interaction Log')
-    log_df = pd.read_csv('interaction_log.csv', names=['Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
-    st.table(log_df)
-else:
-    st.write("No interactions recorded.")
+# Display the interaction history as a table if the checkbox is selected
+if st.checkbox('Show interaction history'):
+    if len(interaction_history) > 0:
+        st.subheader('Interaction History')
+        history_df = pd.DataFrame(interaction_history, columns=['Start Time', 'End Time', 'Duration (seconds)', 'Selected Features', 'Algorithm', 'Accuracy'])
+        st.table(history_df)
+    else:
+        st.write("No interaction history.")
