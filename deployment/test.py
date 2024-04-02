@@ -36,7 +36,7 @@ iteration_counter = 0
 
 while True:
     # Allow users to choose features to train
-    selected_features = st.multiselect('', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
+    selected_features = st.multiselect('Select features to train', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
 
     if len(selected_features) > 0:
         start_time = time.time()  # Record the start time
