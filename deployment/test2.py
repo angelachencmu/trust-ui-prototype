@@ -36,7 +36,7 @@ iteration_counter = 0
 
 while True:
     # Allow users to choose features to train
-    selected_features = st.multiselect('', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
+    selected_features = st.multiselect('Select features to train', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
 
     if len(selected_features) > 0:
         start_time = time.time()  # Record the start time
@@ -185,14 +185,22 @@ while True:
 
             end_time = time.time()  # Record the end time
             duration = round(end_time - start_time, 2)
-            interactions.append([duration, ','.join(selected_features), classifier, acc])  # Store the interaction with accuracy and algorithm type
+            interactions.append([duration, ','.join(selected_features), acc])  # Store the interaction with accuracy
             st.write('Accuracy: ', acc)
         else:
             break
     else:
+        st.write("Please select at least one feature to train the models.")
         break
 
     iteration_counter += 1
 
-# Append interactions to the CSV file without displaying the table
-log_interactions(interactions)
+log_interactions(interactions)  # Append interactions to the CSV file
+
+# Display the interaction log as a table
+if len(interactions) > 0:
+    st.subheader('Interaction Log')
+    log_df = pd.read_csv('interaction_log.csv', names=['Duration (seconds)', 'Selected Features', 'Accuracy'])
+    st.table(log_df)
+else:
+    st.write("No interactions recorded.")
