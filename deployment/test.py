@@ -199,7 +199,9 @@ while True:
         st.write("Please select at least one feature to train the models.")
         break
 
-    if st.button('Finish'):
+    if st.button('Train Model'):
+        continue
+    else:
         break
 
 log_interactions(interactions)  # Write all interactions to the CSV file
