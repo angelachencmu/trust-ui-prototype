@@ -49,10 +49,10 @@ while True:
         alg = ['Decision Tree', 'K-Nearest Neighbors', 'Random Forest']
         classifier = st.selectbox('Which algorithm?', alg)
 
-        # Allow users to hide the sidebar
-        show_sidebar = st.checkbox('Show sidebar', value=True)
+        # Allow users to show/hide hyperparameters
+        show_hyperparameters = st.checkbox('Show Hyperparameters', value=True)
 
-        if show_sidebar:
+        if show_hyperparameters:
             if classifier == 'Decision Tree':
                 st.sidebar.markdown("# Decision Tree Classifier")
                 criterion = st.sidebar.selectbox('Criterion', ('gini', 'entropy'),
