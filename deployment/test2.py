@@ -34,9 +34,12 @@ st.subheader('Machine Learning Models')
 interactions = []
 iteration_counter = 0
 
+# Allow users to choose features to train
+selected_features = st.multiselect('Select features to train', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
+
 while True:
-    # Allow users to choose features to train
-    selected_features = st.multiselect('Select features to train', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
+    # # Allow users to choose features to train
+    # selected_features = st.multiselect('Select features to train', breast_cancer.feature_names, key=f'feature_selection_{iteration_counter}')
 
     if len(selected_features) > 0:
         start_time = time.time()  # Record the start time
