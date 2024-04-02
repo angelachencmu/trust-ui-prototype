@@ -47,7 +47,8 @@ model_trained = False  # Flag to track if a model has been trained
 selected_features = st.multiselect('Select features to train', feature_names, key=f'feature_selection_{iteration_counter}')
 
 if len(selected_features) > 0:
-    start_time = time.time()  # Record the start time
+    if 'start_time' not in st.session_state:
+        st.session_state.start_time = time.time()  # Record the start time when features are selected
 
     features = df[selected_features].values
     labels = df['class'].values
@@ -133,6 +134,10 @@ if len(selected_features) > 0:
                                      max_features=max_features, bootstrap=bootstrap, random_state=random_state)
 
     if st.button('Train Model', key=f'train_model_{iteration_counter}'):
+        start_time = st.session_state.start_time  # Get the start time from session state
+        end_time = time.time()  # Record the end time when the "Train Model" button is clicked
+        duration = round(end_time - start_time, 2)
+
         if classifier == 'Decision Tree':
             dtc.fit(X_train, y_train)
             acc = dtc.score(X_test, y_test)
@@ -145,8 +150,6 @@ if len(selected_features) > 0:
             rfc.fit(X_train, y_train)
             acc = rfc.score(X_test, y_test)
 
-        end_time = time.time()  # Record the end time
-        duration = round(end_time - start_time, 2)
         start_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time))
         end_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_time))
         interactions.append([user_id, start_time_str, end_time_str, duration, ','.join(selected_features), classifier, acc])  # Store the interaction with user ID, start time, end time, accuracy, and algorithm type
@@ -162,6 +165,7 @@ if len(selected_features) > 0:
             writer.writerows(interactions)
 
         model_trained = True  # Set the flag to indicate that a model has been trained
+        del st.session_state.start_time  # Remove the start time from session state
 
     # Button to select new features and retrain the model (only shown after a model has been trained)
     if model_trained:
