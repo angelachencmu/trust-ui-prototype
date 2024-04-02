@@ -29,7 +29,7 @@ It begins by setting a title for the app and offering a choice between two datas
 ## Data Preparation:
 Depending on the chosen dataset, it loads the data and creates a pandas DataFrame with features and target labels. It also provides an option to display this DataFrame in the app.
 ## Machine Learning Model Selection and Configuration:
-The user can enter a unique ID, which seems to be used for tracking purposes.
+The user can enter a unique ID, which is used for tracking purposes.
 There's functionality to select specific features from the dataset to include in the training process.
 The user can choose between three machine learning algorithms: Decision Tree, K-Nearest Neighbors (KNN), and Random Forest. Each algorithm has its own set of parameters that can be adjusted through the sidebar.
 ## Training and Evaluation:
